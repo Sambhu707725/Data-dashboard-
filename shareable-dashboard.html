@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Data Dashboard - Share with Friends!</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function Dashboard() {
+            const [chart, setChart] = useState('bar');
+
+            const data = [
+                { month: 'Jan', value: 4000, color: '#3b82f6' },
+                { month: 'Feb', value: 3000, color: '#8b5cf6' },
+                { month: 'Mar', value: 5000, color: '#ec4899' },
+                { month: 'Apr', value: 2780, color: '#10b981' },
+                { month: 'May', value: 4800, color: '#f59e0b' },
+                { month: 'Jun', value: 3800, color: '#ef4444' },
+            ];
+
+            const styles = {
+                container: {
+                    minHeight: '100vh',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    padding: '20px',
+                    fontFamily: 'Arial, sans-serif',
+                    margin: 0
+                },
+                header: {
+                    textAlign: 'center',
+                    color: 'white',
+                    marginBottom: '30px'
+                },
+                buttonContainer: {
+                    display: 'flex',
+                    gap: '15px',
+                    justifyContent: 'center',
+                    marginBottom: '30px',
+                    flexWrap: 'wrap'
+                },
+                button: (active) => ({
+                    padding: '20px 35px',
+                    fontSize: '1.2em',
+                    fontWeight: 'bold',
+                    border: 'none',
+                    borderRadius: '15px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s',
+                    background: active ? '#10b981' : 'white',
+                    color: active ? 'white' : '#667eea',
+                    transform: active ? 'scale(1.1)' : 'scale(1)',
+                    boxShadow: active ? '0 8px 20px rgba(0,0,0,0.3)' : '0 4px 10px rgba(0,0,0,0.2)'
+                }),
+                chartBox: {
+                    background: 'white',
+                    borderRadius: '25px',
+                    padding: '40px',
+                    boxShadow: '0 15px 40px rgba(0,0,0,0.3)',
+                    marginBottom: '30px',
+                    maxWidth: '1000px',
+                    margin: '0 auto 30px auto'
+                },
+                statsGrid: {
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '20px',
+                    maxWidth: '1000px',
+                    margin: '0 auto'
+                }
+            };
+
+            return (
+                <div style={styles.container}>
+                    <div style={styles.header}>
+                        <h1 style={{ fontSize: '3em', margin: '10px 0' }}>📊 Interactive Dashboard</h1>
+                        <p style={{ fontSize: '1.2em' }}>Click buttons to switch charts! ✨</p>
+                    </div>
+
+                    <div style={styles.buttonContainer}>
+                        <button onClick={() => setChart('bar')} style={styles.button(chart === 'bar')}>
+                            📊 Bar Chart
+                        </button>
+                        <button onClick={() => setChart('line')} style={styles.button(chart === 'line')}>
+                            📈 Line Chart
+                        </button>
+                        <button onClick={() => setChart('pie')} style={styles.button(chart === 'pie')}>
+                            🥧 Pie Chart
+                        </button>
+                    </div>
+
+                    <div style={styles.chartBox}>
+                        <h2 style={{ textAlign: 'center', fontSize: '2em', marginBottom: '30px', color: '#333' }}>
+                            {chart === 'bar' && '📊 Monthly Sales (Bar View)'}
+                            {chart === 'line' && '📈 Sales Trend (Line View)'}
+                            {chart === 'pie' && '🥧 Distribution (Pie View)'}
+                        </h2>
+
+                        {chart === 'bar' && (
+                            <div>
+                                {data.map((item, i) => (
+                                    <div key={i} style={{ marginBottom: '25px' }}>
+                                        <div style={{ fontWeight: 'bold', fontSize: '1.1em', marginBottom: '8px', color: '#555' }}>
+                                            {item.month}
+                                        </div>
+                                        <div style={{ background: '#f0f0f0', height: '50px', borderRadius: '10px', overflow: 'hidden' }}>
+                                            <div style={{
+                                                background: `linear-gradient(90deg, ${item.color}, ${item.color}dd)`,
+                                                height: '100%',
+                                                width: `${(item.value / 5000) * 100}%`,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'flex-end',
+                                                padding: '0 15px',
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                                fontSize: '1.1em',
+                                                transition: 'width 1s ease-out',
+                                                borderRadius: '10px'
+                                            }}>
+                                                ₹{item.value.toLocaleString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {chart === 'line' && (
+                            <svg viewBox="0 0 600 300" style={{ width: '100%', height: 'auto' }}>
+                                <line x1="50" y1="30" x2="50" y2="250" stroke="#ddd" strokeWidth="2"/>
+                                <line x1="50" y1="250" x2="580" y2="250" stroke="#ddd" strokeWidth="2"/>
+                                
+                                {[0, 1, 2, 3, 4].map(i => (
+                                    <line key={i} x1="50" y1={50 + i * 50} x2="580" y2={50 + i * 50} stroke="#f0f0f0" strokeWidth="1"/>
+                                ))}
+                                
+                                <polyline
+                                    points={data.map((d, i) => `${80 + i * 90},${250 - (d.value / 5000) * 200}`).join(' ')}
+                                    fill="none"
+                                    stroke="#3b82f6"
+                                    strokeWidth="4"
+                                />
+                                
+                                {data.map((d, i) => (
+                                    <g key={i}>
+                                        <circle cx={80 + i * 90} cy={250 - (d.value / 5000) * 200} r="8" fill={d.color} stroke="white" strokeWidth="3"/>
+                                        <text x={80 + i * 90} y="275" textAnchor="middle" fontSize="16" fontWeight="bold" fill="#666">{d.month}</text>
+                                    </g>
+                                ))}
+                            </svg>
+                        )}
+
+                        {chart === 'pie' && (
+                            <div style={{ textAlign: 'center' }}>
+                                <svg viewBox="0 0 400 400" style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+                                    <path d="M 200 200 L 200 50 A 150 150 0 0 1 320 250 Z" fill="#3b82f6" opacity="0.9"/>
+                                    <text x="260" y="130" fontSize="20" fontWeight="bold" fill="white">Electronics</text>
+                                    <text x="275" y="155" fontSize="18" fill="white">35%</text>
+                                    
+                                    <path d="M 200 200 L 320 250 A 150 150 0 0 1 90 310 Z" fill="#10b981" opacity="0.9"/>
+                                    <text x="195" y="280" fontSize="20" fontWeight="bold" fill="white">Clothing</text>
+                                    <text x="215" y="305" fontSize="18" fill="white">25%</text>
+                                    
+                                    <path d="M 200 200 L 90 310 A 150 150 0 0 1 105 75 Z" fill="#f59e0b" opacity="0.9"/>
+                                    <text x="90" y="190" fontSize="20" fontWeight="bold" fill="white">Food</text>
+                                    <text x="95" y="215" fontSize="18" fill="white">25%</text>
+                                    
+                                    <path d="M 200 200 L 105 75 A 150 150 0 0 1 200 50 Z" fill="#ef4444" opacity="0.9"/>
+                                    <text x="125" y="95" fontSize="20" fontWeight="bold" fill="white">Books</text>
+                                    <text x="135" y="120" fontSize="18" fill="white">15%</text>
+                                </svg>
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={styles.statsGrid}>
+                        {[
+                            { label: 'Total Sales', value: '₹20,060', change: '↑ 12%', color: '#3b82f6', icon: '💰' },
+                            { label: 'Total Profit', value: '₹26,106', change: '↑ 8%', color: '#10b981', icon: '📈' },
+                            { label: 'Total Expenses', value: '₹12,083', change: '↑ 3%', color: '#f59e0b', icon: '💸' }
+                        ].map((stat, i) => (
+                            <div key={i} style={{
+                                background: 'white',
+                                padding: '25px',
+                                borderRadius: '15px',
+                                boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
+                                borderLeft: `6px solid ${stat.color}`
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                                    <div>
+                                        <div style={{ color: '#666', fontSize: '0.9em', fontWeight: 'bold', marginBottom: '8px' }}>
+                                            {stat.label}
+                                        </div>
+                                        <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#333' }}>
+                                            {stat.value}
+                                        </div>
+                                        <div style={{ color: '#10b981', fontWeight: 'bold', marginTop: '5px' }}>
+                                            {stat.change}
+                                        </div>
+                                    </div>
+                                    <div style={{ fontSize: '3em' }}>{stat.icon}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ textAlign: 'center', color: 'white', marginTop: '40px', fontSize: '1.2em', fontWeight: 'bold' }}>
+                        ✨ Fully Interactive Dashboard - Share with Anyone! ✨
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Dashboard />);
+    </script>
+</body>
+</html>
